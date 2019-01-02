@@ -14,6 +14,7 @@ function init() {
 }
 
 function doNotTrack(request = {}) {
+  return false;
   if (!request.headers) {
     return false;
   }
