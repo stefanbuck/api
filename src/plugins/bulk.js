@@ -31,10 +31,15 @@ const register = (server) => {
         try { 
 
             const zeitPayload = payload
-              .filter(({type}) => type === 'registry')
-              .filter(({registry}) => Object.keys(registryConfig).includes(registry))
-              .filter(({target}) => !!target)
-              .filter(({target}) => !target.startsWith('@/'));
+              .filter(({target}) => !target.startsWith('@/')).map(item => {
+                if (item.type === 'registry') {
+                  return {
+                    type: item.registry,
+                    target: item.target,
+                  }
+                }
+                return item;
+              });
   
             const startTime = Date.now();
 
