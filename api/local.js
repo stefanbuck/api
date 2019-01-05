@@ -1,26 +1,27 @@
-var http = require("http");
-var got = require("got");
+const http = require('http');
+const got = require('got');
+const handler = require('./handler.js');
 
 const zeitId = process.argv[2];
 
 if (!zeitId) {
   http
-    .createServer(function(req, res) {
-      if (!req.url.includes("favicon.ico")) {
-        require("./handler.js")(req, res);
+    .createServer((req, res) => {
+      if (!req.url.includes('favicon.ico')) {
+        handler(req, res);
       }
     })
     .listen(3000);
 }
 
 const url = zeitId
-  ? `https://octo-resolver-${zeitId}.now.sh/`
-  : "http://localhost:3000/";
+  ? `https://live-resolver-${zeitId}.now.sh/`
+  : 'http://localhost:3000/';
 console.log(url);
 
-let timings = [];
+const timings = [];
 const initialRequest = () => {
-  console.log("---------------------");
+  console.log('---------------------');
   got
     .post({
       json: true,
@@ -29,30 +30,30 @@ const initialRequest = () => {
         // { type: "bower", target: "jquery" },
         // {"type": "composer", "target": "phpunit/phpunit"},
         // {"type": "rubygems", "target": "nokogiri"},
-        { type: "foo", target: "bar" },
-        { type: "npm", target: "" },
-        { type: "npm", target: "request" },
-        { type: "npm", target: "request" },
-        { type: "npm", target: "babel-helper-regex" },
+        { type: 'foo', target: 'bar' },
+        { type: 'npm', target: '' },
+        { type: 'npm', target: 'request' },
+        { type: 'npm', target: 'request' },
+        { type: 'npm', target: 'babel-helper-regex' },
         // {"type": "npm", "target": "audio-context-polyfill"},
         // {"type": "npm", "target": "github-url-from-username-repo"},
         // {"type": "npm", "target": "find-project-root"},
         // {"type": "pypi", "target": "simplejson"},
         // {"type": "crates", "target": "libc"},
-        { type: "go", target: "k8s.io/kubernetes/pkg/api" },
+        { type: 'go', target: 'k8s.io/kubernetes/pkg/api' },
 
         // { type: "melpa", target: "zzz-to-char" }, // only supported in API
 
-        { type: "java", target: "org.apache.log4j.Appender" },
-        { type: "ping", target: "https://nodejs.org/api/path.html" },
-        { type: "ping", target: "http://notfound4040.org/path.html" },
-        { type: "unkown", target: "boom" },
+        { type: 'java', target: 'org.apache.log4j.Appender' },
+        { type: 'ping', target: 'https://nodejs.org/api/path.html' },
+        { type: 'ping', target: 'http://notfound4040.org/path.html' },
+        { type: 'unkown', target: 'boom' },
         {},
-        { foo: "bar" },
+        { foo: 'bar' },
         1,
         undefined,
-        "foo"
-      ]
+        'foo',
+      ],
     })
     .then(({ body }) => {
       timings.push(body);
@@ -60,11 +61,11 @@ const initialRequest = () => {
       if (timings.length < 1) {
         initialRequest();
       } else {
-        console.log("---------------------");
-        console.log(JSON.stringify(timings, null, " "));
+        console.log('---------------------');
+        console.log(JSON.stringify(timings, null, ' '));
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
     });
 };

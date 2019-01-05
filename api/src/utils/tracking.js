@@ -1,4 +1,4 @@
-const Mixpanel = require("mixpanel");
+const Mixpanel = require('mixpanel');
 
 let instance;
 
@@ -9,17 +9,17 @@ module.exports = {
     }
 
     instance = Mixpanel.init(process.env.MIXPANEL_TOKEN, {
-      protocol: "https"
+      protocol: 'https',
     });
   },
 
   track: (eventName, data) => {
     if (!instance) {
-      return console.log("Track", eventName, data);
+      return console.log('Track', eventName, data);
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       instance.track(eventName, data, resolve);
     });
-  }
+  },
 };

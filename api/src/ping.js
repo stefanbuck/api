@@ -1,6 +1,6 @@
-const got = require("got");
+const got = require('got');
 
-module.exports = function(url) {
+module.exports = function (url) {
   return got
     .head(url)
     .then(() => url)

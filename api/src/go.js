@@ -1,26 +1,26 @@
-const findReachableUrls = require("find-reachable-urls");
-const readMeta = require("lets-get-meta");
-const got = require("got");
-const cache = require("../utils/cache");
+const findReachableUrls = require('find-reachable-urls');
+const readMeta = require('lets-get-meta');
+const got = require('got');
+const cache = require('./utils/cache');
 
-const getGoMeta = async url => {
+const getGoMeta = async (url) => {
   const response = await got.get(url);
   const meta = readMeta(response.body);
 
-  if (!meta["go-source"]) {
-    throw new Error("go-source meta is missing");
+  if (!meta['go-source']) {
+    throw new Error('go-source meta is missing');
   }
 
-  const values = meta["go-source"].replace(/\s+/g, " ").split(" ");
+  const values = meta['go-source'].replace(/\s+/g, ' ').split(' ');
 
   return {
     projectRoot: values[0],
     projectUrl: values[1],
-    dirTemplate: values[2].replace("{/dir}", "")
+    dirTemplate: values[2].replace('{/dir}', ''),
   };
 };
 
-const resolveUrl = async url => {
+const resolveUrl = async (url) => {
   let goMetaConfig;
 
   const cacheKey = `go_${url}`;
@@ -40,13 +40,13 @@ const resolveUrl = async url => {
   const reachableUrl = await findReachableUrls(
     [
       url.replace(goMetaConfig.projectRoot, goMetaConfig.dirTemplate),
-      goMetaConfig.projectUrl
+      goMetaConfig.projectUrl,
     ],
-    { firstMatch: true }
+    { firstMatch: true },
   );
 
   if (!reachableUrl) {
-    throw new Error("No url is reachable");
+    throw new Error('No url is reachable');
   }
 
   await cache.set(cacheKey, reachableUrl);
@@ -54,7 +54,7 @@ const resolveUrl = async url => {
   return reachableUrl;
 };
 
-module.exports = async function(pkg) {
+module.exports = async function (pkg) {
   //   const eventData = {
   //     registry: "go",
   //     resourceId: `go:::${pkg}`,

@@ -1,27 +1,27 @@
-const nodeUrl = require("url");
-const githubUrl = require("github-url-to-object");
+const nodeUrl = require('url');
+const githubUrl = require('github-url-to-object');
 
-module.exports = function(url) {
-  if (typeof url !== "string") {
+module.exports = function (url) {
+  if (typeof url !== 'string') {
     return null;
   }
 
   // Remove last trailing slash
-  if (url.slice(-1) === "/") {
+  if (url.slice(-1) === '/') {
     url = url.slice(0, -1);
   }
 
   // Fix multiple forward slashes
-  url = url.replace(/([^:]\/)\/+/g, "$1");
+  url = url.replace(/([^:]\/)\/+/g, '$1');
 
   // Resolve shorthand url to a qualified URL
-  if (url.split("/").length === 2) {
+  if (url.split('/').length === 2) {
     url = `http://github.com/${url}`;
   }
 
   // Replace and fix invalid urls
-  url = url.replace("https+git://", "git+https://");
-  url = url.replace("://www.github.com", "://github.com");
+  url = url.replace('https+git://', 'git+https://');
+  url = url.replace('://www.github.com', '://github.com');
 
   // Ensure there is a protocol (`github-url-to-object` needs it)
   if (nodeUrl.parse(url).protocol === null) {

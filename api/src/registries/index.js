@@ -1,19 +1,19 @@
-const util = require("util");
-const got = require("got");
-const isUrl = require("is-url");
-const findReachableUrls = require("find-reachable-urls");
-const repositoryUrl = require("./repository-url");
-const xpathHelper = require("./xpath-helper");
-const registryConfig = require("./config.json");
-const cache = require("../../utils/cache");
-const log = require("../../utils/log");
+const util = require('util');
+const got = require('got');
+const isUrl = require('is-url');
+const findReachableUrls = require('find-reachable-urls');
+const repositoryUrl = require('./repository-url');
+const xpathHelper = require('./xpath-helper');
+const registryConfig = require('./config.json');
+const cache = require('../utils/cache');
+const log = require('../utils/log');
 
 async function resolve(type, packageName) {
   const cacheKey = `${type}_${packageName}`;
 
   const cacheValue = await cache.get(cacheKey);
 
-  if (!!cacheValue) {
+  if (cacheValue) {
     return cacheValue;
   }
 
@@ -25,7 +25,7 @@ async function resolve(type, packageName) {
 
   const requestUrl = util.format(
     config.registry,
-    packageName.replace(/\//g, "%2f")
+    packageName.replace(/\//g, '%2f'),
   );
 
   let response;
@@ -33,7 +33,7 @@ async function resolve(type, packageName) {
     response = await got.get(requestUrl);
   } catch (err) {
     if (err.statusCode === 404) {
-      return log("Package not found", packageName, type);
+      return log('Package not found', packageName, type);
     }
 
     return log(err);
@@ -43,21 +43,23 @@ async function resolve(type, packageName) {
   try {
     json = JSON.parse(response.body);
   } catch (err) {
-    log("Parsing response failed");
+    log('Parsing response failed');
     return;
   }
 
   const urls = xpathHelper(json, config.xpaths);
 
-  if (type === "npm") {
+  if (type === 'npm') {
     try {
       urls.push(
-        ...json.maintainers.map(({ name }) => `${name}/${packageName}`)
+        ...json.maintainers.map(({ name }) => `${name}/${packageName}`),
       );
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
   }
 
-  const validUrls = urls.map(bestMatchUrl => {
+  const validUrls = urls.map((bestMatchUrl) => {
     try {
       let url = repositoryUrl(bestMatchUrl);
 
@@ -79,7 +81,7 @@ async function resolve(type, packageName) {
   const reachableUrl = await findReachableUrls(tryUrls, { firstMatch: true });
 
   if (!reachableUrl) {
-    log("No URL for package found");
+    log('No URL for package found');
     return;
   }
 
@@ -90,5 +92,5 @@ async function resolve(type, packageName) {
 
 module.exports = {
   supported: Object.keys(registryConfig),
-  resolve
+  resolve,
 };
