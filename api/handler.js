@@ -89,27 +89,28 @@ module.exports = async (req, res) => {
       log('Timing Total', timingTotalEnd - timingTotalStart);
       log('Timing Auth', timingAuthEnd - timingAuthStart);
 
-      await tracking.track('info2', {
-        completed,
-        instanceName: logPrefix,
-        ...cache.getRedisStatus(),
-        simpleCacheSize: cache.simpleCacheSize(),
-        exectuionTime: timingTotalEnd - timingTotalStart,
-      });
+      const meta = {
+        event: '0meta',
+        properties: {
+          completed,
+          instanceName: logPrefix,
+          ...cache.getRedisStatus(),
+          simpleCacheSize: cache.simpleCacheSize(),
+          exectuionTime: timingTotalEnd - timingTotalStart,
+        },
+      };
 
-      await tracking.track(
-        'types3',
-        payload.reduce((memo, item) => {
-          if (!memo[item.type]) {
-            memo[item.type] = [];
-          }
-          if (item.target) {
-            memo[item.type].push(item.target);
-          }
+      const bulkData = [
+        meta,
+        ...result.map(item => ({
+          event: '0packages',
+          properties: item,
+        })),
+      ];
 
-          return memo;
-        }, {}),
-      );
+      console.time('Mixpanel');
+      await tracking.track(bulkData);
+      console.timeEnd('Mixpanel');
     }
 
     res.end(

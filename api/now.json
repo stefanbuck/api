@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "name": "octolinker",
+  "builds": [{ "src": "handler.js", "use": "@now/node" }],
+  "routes": [{ "src": "/.*", "dest": "handler.js" }],
+  "regions": ["all"]
+}

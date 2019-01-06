@@ -1,7 +1,0 @@
-{
-  "version": 2,
-  "public": true,
-  "builds": [{ "src": "api/handler.js", "use": "@now/node" }],
-  "routes": [{ "src": "/.*", "dest": "/api/handler.js" }],
-  "regions": ["all"]
-}

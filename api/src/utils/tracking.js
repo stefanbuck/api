@@ -13,13 +13,13 @@ module.exports = {
     });
   },
 
-  track: (eventName, data) => {
+  track: (data) => {
     if (!instance) {
-      return console.log('Track', eventName, data);
+      return console.log('Track', data);
     }
 
     return new Promise((resolve) => {
-      instance.track(eventName, data, resolve);
+      instance.track_batch(data, resolve);
     });
   },
 };

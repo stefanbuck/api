@@ -15,7 +15,7 @@ if (!zeitId) {
 }
 
 const url = zeitId
-  ? `https://live-resolver-${zeitId}.now.sh/`
+  ? `https://octolinker-${zeitId}.now.sh/`
   : 'http://localhost:3000/';
 console.log(url);
 
